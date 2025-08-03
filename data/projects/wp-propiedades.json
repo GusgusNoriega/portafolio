@@ -1,0 +1,22 @@
+{
+  "slug": "wp-propiedades",
+  "titulo": "Template de Propiedades (WordPress)",
+  "empresa": "Freelance",
+  "tiempo": "Jul 2025 — Ago 2025",
+  "periodo": { "inicio": "2025-07-27", "fin": "2025-08-03" },
+  "descripcion": "Template para CPT 'listings' con filtros GET, paginación y AJAX.",
+  "responsabilidades": [
+    "Estructura del template y taxonomías.",
+    "Paginación y 'Cargar más' via AJAX.",
+    "Optimización de rendimiento y accesibilidad."
+  ],
+  "tecnologias": ["WordPress", "ACF", "AJAX"],
+  "imagenes": [
+    "./images/wp-propiedades-1.jpg",
+    "./images/wp-propiedades-2.jpg"
+  ],
+  "links": {
+    "demo": "#",
+    "repo": "#"
+  }
+}

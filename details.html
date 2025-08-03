@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proyecto — Detalle</title>
+  <style>
+    :root{
+      --bg:#0b0c10; --text:#e6e7ea; --muted:#a9adba; --ring:#2b3348;
+      --card:#141722; --card2:#1a1f2e; --primary:#7aa2ff; --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.35);
+      --container: 960px;
+    }
+    body{margin:0; font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif; color:var(--text);
+      background:linear-gradient(180deg,#0b0c10 0%,#111218 100%);}
+    .wrap{max-width:var(--container); margin:0 auto; padding:24px}
+    header{padding:28px 24px; border-bottom:1px solid var(--ring); background:radial-gradient(900px 500px at 80% -10%, rgba(122,162,255,.12), transparent 55%)}
+    .title{margin:0; font-size:clamp(24px,4vw,36px)}
+    .muted{color:var(--muted)}
+    .chips{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0}
+    .chip{background:#232a3b; border:1px solid var(--ring); padding:6px 10px; border-radius:999px; font-size:12px}
+    .card{background:linear-gradient(180deg,var(--card) 0%, var(--card2) 100%); border:1px solid var(--ring); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+    .section{padding:16px 18px}
+    .gallery{display:grid; gap:10px; grid-template-columns:repeat(1,1fr)}
+    @media (min-width:700px){ .gallery{grid-template-columns:repeat(2,1fr)} }
+    img{width:100%; height:auto; border-radius:12px}
+    .actions{display:flex; gap:10px; margin-top:12px}
+    .btn{border:1px solid var(--ring); background:transparent; color:var(--text); padding:10px 14px; border-radius:10px; text-decoration:none}
+    .btn--primary{background:linear-gradient(135deg,var(--primary),#a77dff); border-color:transparent; color:#fff}
+    .back{display:inline-block; margin-top:12px}
+    .error{color:#ffb4b4; background:#301d1f; border:1px solid #5c2b31; padding:12px; border-radius:12px}
+    footer{border-top:1px solid var(--ring); margin-top:28px; padding:18px 24px; color:var(--muted); font-size:14px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="back muted" href="./index.html">← Volver</a>
+      <h1 id="titulo" class="title">Cargando…</h1>
+      <p id="meta" class="muted"></p>
+      <div id="tech" class="chips"></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="error" class="error" style="display:none"></div>
+
+    <div id="desc" class="card section" hidden>
+      <h2 style="margin:0 0 8px">Descripción</h2>
+      <p id="descripcion"></p>
+      <h3 style="margin:14px 0 6px">Responsabilidades</h3>
+      <ul id="responsabilidades" style="margin:0 0 6px 18px"></ul>
+      <div id="links" class="actions"></div>
+    </div>
+
+    <div id="gal" class="card section" hidden>
+      <h2 style="margin:0 0 8px">Galería</h2>
+      <div id="gallery" class="gallery"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">© <span id="year"></span> · Detalle de proyecto</div>
+  </footer>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const byId = id => document.getElementById(id);
+
+    const params = new URLSearchParams(location.search);
+    const slug = (params.get("p") || "").toLowerCase();
+
+    const allowedSlug = /^[a-z0-9-]+$/; // evita rutas raras
+    const yearEl = byId("year"); yearEl.textContent = new Date().getFullYear();
+
+    async function loadManifest(){
+      const res = await fetch("./data/index.json", {cache: "no-store"});
+      if(!res.ok) throw new Error("No se pudo cargar el manifest.");
+      return res.json();
+    }
+    async function loadProject(file){
+      const res = await fetch(`./data/${file}`, {cache: "no-store"});
+      if(!res.ok) throw new Error("No se encontró el JSON del proyecto.");
+      return res.json();
+    }
+    function showError(msg){
+      const el = byId("error");
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+    function render(project){
+      byId("titulo").textContent = project.titulo || "Proyecto";
+      const empresa = project.empresa ? ` · ${project.empresa}` : "";
+      const tiempo = project.tiempo ? project.tiempo : "";
+      byId("meta").textContent = [tiempo, empresa].filter(Boolean).join("");
+
+      // tecnologías
+      const tech = byId("tech");
+      tech.innerHTML = (project.tecnologias || [])
+        .map(t => `<span class="chip">${t}</span>`).join("");
+
+      // descripción + responsabilidades
+      byId("descripcion").textContent = project.descripcion || "";
+      const ul = byId("responsabilidades");
+      ul.innerHTML = (project.responsabilidades || []).map(r => `<li>${r}</li>`).join("");
+      byId("desc").hidden = false;
+
+      // links
+      const links = project.links || {};
+      const linksEl = byId("links");
+      linksEl.innerHTML = `
+        ${links.demo ? `<a class="btn btn--primary" target="_blank" rel="noopener" href="${links.demo}">Demo</a>` : ""}
+        ${links.repo ? `<a class="btn" target="_blank" rel="noopener" href="${links.repo}">Repositorio</a>` : ""}
+      `;
+
+      // galería
+      const gal = byId("gal");
+      const gallery = byId("gallery");
+      gallery.innerHTML = (project.imagenes || [])
+        .map(src => `<img src="${src}" alt="Imagen de ${project.titulo}" loading="lazy">`).join("");
+      gal.hidden = !(project.imagenes && project.imagenes.length);
+    }
+
+    (async function(){
+      try{
+        if(!slug || !allowedSlug.test(slug)){
+          showError("Parámetro inválido o faltante. Usa ?p=slug");
+          return;
+        }
+        const manifest = await loadManifest();
+        const item = (manifest.projects || []).find(p => p.slug === slug);
+        if(!item){
+          showError("Proyecto no listado en el manifest.");
+          return;
+        }
+        const project = await loadProject(item.file);
+        render(project);
+      }catch(err){
+        console.error(err);
+        showError(err.message || "Error al cargar el proyecto.");
+      }
+    })();
+  </script>
+</body>
+</html>

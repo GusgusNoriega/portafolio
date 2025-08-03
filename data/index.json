@@ -1,0 +1,9 @@
+{
+  "projects": [
+    {
+      "slug": "wp-propiedades",
+      "file": "projects/wp-propiedades.json",
+      "titulo": "Template de Propiedades (WordPress)"
+    }
+  ]
+}
