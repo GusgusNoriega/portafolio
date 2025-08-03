@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portafolio — Gustavo Noriega</title>
+  <meta name="description" content="Portafolio de Gustavo Noriega — HTML, CSS y JS puros." />
+  <style>
+    /* ====== Diseño base con variables (soporta modo claro/oscuro) ====== */
+    :root{
+      --bg: #0b0c10;
+      --bg-soft: #111218;
+      --text: #e6e7ea;
+      --muted: #a9adba;
+      --card: #141722;
+      --card-2: #1a1f2e;
+      --primary: #7aa2ff;
+      --primary-2: #a77dff;
+      --ring: #2b3348;
+      --chip: #232a3b;
+      --success: #37d399;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --radius-sm: 12px;
+      --radius-xs: 10px;
+      --container: 1150px;
+      --trans: 220ms cubic-bezier(.22,.61,.36,1);
+    }
+    .light{
+      --bg: #f6f7fb;
+      --bg-soft: #ffffff;
+      --text: #0e1320;
+      --muted: #5a6476;
+      --card: #ffffff;
+      --card-2: #f5f7ff;
+      --primary: #2b59ff;
+      --primary-2: #7a3cff;
+      --ring: #e6e9f5;
+      --chip: #eef1fa;
+      --shadow: 0 10px 30px rgba(22,25,45,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      color:var(--text); background:linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+    }
+    a{color:inherit; text-decoration:none}
+    img{max-width:100%; display:block}
+    .container{max-width:var(--container); margin:0 auto; padding:24px}
+    header.hero{
+      position:relative; padding:56px 24px 32px; overflow:hidden;
+      background:
+        radial-gradient(1200px 600px at 80% -10%, rgba(122,162,255,.15), transparent 60%),
+        radial-gradient(900px 500px at -10% 0%, rgba(167,125,255,.14), transparent 55%);
+      border-bottom:1px solid var(--ring);
+    }
+    .hero__inner{max-width:var(--container); margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:24px}
+    .brand{display:flex; gap:16px; align-items:center}
+    .avatar{
+      width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      display:grid; place-items:center; color:white; font-weight:700; letter-spacing:.5px; box-shadow:var(--shadow)
+    }
+    .title{margin:0; font-size:clamp(24px, 4vw, 36px); line-height:1.15}
+    .subtitle{margin:6px 0 0; color:var(--muted)}
+    .hero__actions{display:flex; gap:10px; align-items:center}
+    .btn{
+      border:1px solid var(--ring); background:transparent; color:var(--text);
+      padding:10px 14px; border-radius:10px; cursor:pointer; transition:transform var(--trans), background var(--trans), border var(--trans);
+    }
+    .btn:hover{transform:translateY(-1px); background:var(--card-2)}
+    .btn--primary{border-color:transparent; background:linear-gradient(135deg,var(--primary),var(--primary-2)); color:#fff}
+    .btn--primary:hover{filter:saturate(1.05); transform:translateY(-1.5px)}
+    .toggle{min-width:42px}
+
+    /* ====== Barra de controles ====== */
+    .controls{
+      margin:22px auto 8px; display:grid; gap:12px;
+      grid-template-columns: minmax(0,1fr) 220px 180px 44px;
+      align-items:center;
+    }
+    .field{
+      display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--card);
+      border:1px solid var(--ring); border-radius:12px;
+    }
+    .field input,.field select{
+      width:100%; outline:none; border:none; background:transparent; color:var(--text); font-size:14px;
+    }
+    .count{justify-self:end; color:var(--muted); font-size:14px}
+
+    /* ====== Grid de proyectos ====== */
+    .grid{
+      margin-top:10px;
+      display:grid; grid-template-columns: repeat(1, minmax(0,1fr)); gap:18px;
+    }
+    @media (min-width:700px){ .grid{grid-template-columns: repeat(2, minmax(0,1fr));} }
+    @media (min-width:1024px){ .grid{grid-template-columns: repeat(3, minmax(0,1fr));} }
+
+    .card{
+      background:linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
+      border:1px solid var(--ring); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+      display:flex; flex-direction:column; transition:transform var(--trans), box-shadow var(--trans), border var(--trans);
+      opacity:0; transform: translateY(12px);
+    }
+    .card.appear{opacity:1; transform: translateY(0)}
+    .card:hover{transform:translateY(-3px)}
+    .thumb{
+      aspect-ratio: 16 / 9; background:#0f1220; position:relative; overflow:hidden;
+      border-bottom:1px solid var(--ring);
+    }
+    .thumb img{width:100%; height:100%; object-fit:cover}
+    .badge{
+      position:absolute; left:10px; top:10px;
+      background:rgba(15,18,32,.7); backdrop-filter: blur(6px);
+      color:#fff; font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12)
+    }
+    .content{padding:14px 14px 16px}
+    .content h3{margin:0 0 6px; font-size:18px; line-height:1.3}
+    .meta{display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:var(--muted); font-size:13px; margin-bottom:8px}
+    .chip{background:var(--chip); border:1px solid var(--ring); padding:4px 8px; border-radius:999px; font-size:12px}
+    .desc{margin:8px 0 12px; color:var(--text)}
+    .card .actions{display:flex; gap:10px}
+    .card .actions .btn{font-size:13px; padding:8px 10px}
+    .empty{
+      text-align:center; color:var(--muted); padding:32px; border:1px dashed var(--ring);
+      border-radius:var(--radius); background:var(--card-2)
+    }
+    footer{border-top:1px solid var(--ring); margin-top:28px; padding:18px 24px; color:var(--muted); font-size:14px}
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__inner">
+      <div class="brand">
+        <div class="avatar" aria-hidden="true">GN</div>
+        <div>
+          <h1 class="title">Gustavo Noriega</h1>
+          <p class="subtitle">Desarrollador Full-Stack · Portafolio</p>
+        </div>
+      </div>
+      <div class="hero__actions">
+        <a class="btn" href="mailto:tu-email@ejemplo.com">Contacto</a>
+        <a class="btn" href="https://github.com/GusgusNoriega" target="_blank" rel="noopener">GitHub</a>
+        <button id="themeToggle" class="btn toggle" aria-label="Cambiar tema">🌓</button>
+      </div>
+    </div>
+    <div class="container" style="padding-top:16px">
+      <div class="controls">
+        <label class="field" title="Buscar por título o descripción">
+          <span class="sr-only">Buscar</span>
+          🔎
+          <input id="q" type="search" placeholder="Buscar proyectos..." autocomplete="off" />
+        </label>
+        <label class="field">
+          <span class="sr-only">Filtrar por empresa</span>
+          <select id="empresa">
+            <option value="">Todas las empresas</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="sr-only">Ordenar</span>
+          <select id="orden">
+            <option value="recientes">Más recientes</option>
+            <option value="antiguos">Más antiguos</option>
+            <option value="titulo">Título (A–Z)</option>
+          </select>
+        </label>
+        <div class="count" id="count">0</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="grid" class="grid" aria-live="polite"></section>
+    <div id="empty" class="empty" hidden>No se encontraron proyectos con esos criterios.</div>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="year"></span> · Hecho con HTML, CSS y JS.
+    </div>
+  </footer>
+
+  <script>
+    /* =======================
+       1) Proyectos — edita src de imágenes/enlaces si aplica
+       ======================= */
+    const PROYECTOS = [
+      {
+        titulo: "Template de Propiedades (WordPress)",
+        empresa: "Freelance",
+        tiempo: "Jul 2025 — Ago 2025",
+        inicio: "2025-07-27",
+        fin: "2025-08-03",
+        descripcion: "Template desde cero para CPT 'listings' con filtros por GET, paginación y 'Cargar más' por AJAX.",
+        imagen: "./images/wp-propiedades.jpg",
+        enlace: "#",
+        tags: ["WordPress", "ACF", "AJAX"]
+      },
+      {
+        titulo: "Buscador global y filtros (WordPress)",
+        empresa: "Freelance",
+        tiempo: "Ago 2025",
+        inicio: "2025-08-02",
+        fin: "2025-08-02",
+        descripcion: "Barra de búsqueda secundaria con parámetros GET, manejo de errores JS y conflictos de scripts.",
+        imagen: "./images/wp-buscador.jpg",
+        enlace: "#",
+        tags: ["WordPress", "JavaScript"]
+      },
+      {
+        titulo: "Task Manager (Next.js + Django)",
+        empresa: "Proyecto personal",
+        tiempo: "Jun 2025",
+        inicio: "2025-06-20",
+        fin: "2025-06-20",
+        descripcion: "App fullstack con API Django + JWT y frontend Next.js. Login, creación, edición y borrado de tareas.",
+        imagen: "./images/task-manager.jpg",
+        enlace: "#",
+        tags: ["Next.js", "Django", "JWT"]
+      },
+      {
+        titulo: "API de Documentos (Laravel + Spatie)",
+        empresa: "Cliente Iván",
+        tiempo: "Jun 2025",
+        inicio: "2025-06-21",
+        fin: "2025-06-21",
+        descripcion: "API REST para documentos e imágenes usando Spatie Media Library y documentación OpenAPI.",
+        imagen: "./images/laravel-docs-api.jpg",
+        enlace: "#",
+        tags: ["Laravel", "REST", "OpenAPI"]
+      },
+      {
+        titulo: ".NET API simple (almacén de nombres)",
+        empresa: "Proyecto personal",
+        tiempo: "Ago 2025",
+        inicio: "2025-08-01",
+        fin: "2025-08-01",
+        descripcion: "API con dos endpoints: guardar nombres en archivo de texto y listarlos en JSON. HTML/JS de consumo.",
+        imagen: "./images/dotnet-api.jpg",
+        enlace: "#",
+        tags: [".NET", "API", "JavaScript"]
+      },
+      {
+        titulo: "Integración EasyBroker (consulta de estado)",
+        empresa: "Freelance",
+        tiempo: "Ago 2025",
+        inicio: "2025-08-02",
+        fin: "2025-08-02",
+        descripcion: "Consulta del estado de propiedades por ID con la API de EasyBroker e integración con WordPress.",
+        imagen: "./images/easybroker.jpg",
+        enlace: "#",
+        tags: ["API", "WordPress"]
+      },
+      {
+        titulo: "Theme con ACF y secciones dinámicas",
+        empresa: "NERD MEDIA S.A.C.",
+        tiempo: "Dic 2024 — Ene 2025",
+        inicio: "2024-12-12",
+        fin: "2025-01-15",
+        descripcion: "Adaptación de HTML a secciones administrables con ACF: hero, grids, sliders y contenido corporativo.",
+        imagen: "./images/acf-theme.jpg",
+        enlace: "#",
+        tags: ["WordPress", "ACF"]
+      },
+      {
+        titulo: "Plugin de pago Izipay (sandbox)",
+        empresa: "NERD MEDIA S.A.C.",
+        tiempo: "Nov 2024",
+        inicio: "2024-11-06",
+        fin: "2024-11-20",
+        descripcion: "Plugin de prueba para simular pagos con APIs sandbox de Izipay y validaciones front.",
+        imagen: "./images/izipay-plugin.jpg",
+        enlace: "#",
+        tags: ["WordPress", "Pagos", "APIs"]
+      },
+      {
+        titulo: "Autenticación API con Laravel Passport",
+        empresa: "Proyecto personal",
+        tiempo: "Nov 2024",
+        inicio: "2024-11-02",
+        fin: "2024-11-04",
+        descripcion: "API-only backend con Laravel + Passport, endpoints de login y guardado de token en sessionStorage.",
+        imagen: "./images/passport.jpg",
+        enlace: "https://github.com/GusgusNoriega/sistemanerd",
+        tags: ["Laravel", "Passport", "API"]
+      },
+      {
+        titulo: "Gestión de cookies y consentimientos",
+        empresa: "NERD MEDIA S.A.C.",
+        tiempo: "Oct 2024",
+        inicio: "2024-10-16",
+        fin: "2024-10-16",
+        descripcion: "Pop-ups de consentimiento con categorías: esenciales, funcionalidad, rendimiento y publicidad.",
+        imagen: "./images/cookies.jpg",
+        enlace: "#",
+        tags: ["UX", "Privacidad"]
+      }
+    ];
+
+    /* =======================
+       2) Utilidades y UI
+       ======================= */
+    const $ = s => document.querySelector(s);
+    const grid = $("#grid");
+    const empty = $("#empty");
+    const q = $("#q");
+    const selEmpresa = $("#empresa");
+    const selOrden = $("#orden");
+    const count = $("#count");
+    const themeToggle = $("#themeToggle");
+
+    // Tema
+    const THEME_KEY = "portfolio:theme";
+    function applyTheme(t){
+      document.body.classList.toggle("light", t === "light");
+      localStorage.setItem(THEME_KEY, t);
+      themeToggle.textContent = t === "light" ? "🌙" : "🌓";
+      themeToggle.setAttribute("aria-label", t === "light" ? "Cambiar a tema oscuro" : "Cambiar a tema claro");
+    }
+    function initTheme(){
+      const saved = localStorage.getItem(THEME_KEY);
+      const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+      applyTheme(saved || (prefersLight ? "light" : "dark"));
+    }
+    themeToggle.addEventListener("click", () => {
+      const now = document.body.classList.contains("light") ? "dark" : "light";
+      applyTheme(now);
+    });
+
+    // Populate filtro de empresa
+    function uniqueEmpresas(data){
+      return Array.from(new Set(data.map(p => p.empresa))).sort((a,b)=>a.localeCompare(b));
+    }
+    function fillEmpresaOptions(data){
+      const opts = ['<option value="">Todas las empresas</option>']
+        .concat(uniqueEmpresas(data).map(e=>`<option value="${e}">${e}</option>`));
+      selEmpresa.innerHTML = opts.join("");
+    }
+
+    // Orden
+    function sortProjects(list, by){
+      const copy = [...list];
+      if(by === "recientes"){
+        return copy.sort((a,b)=> (b.fin || b.inicio || "").localeCompare(a.fin || a.inicio || ""));
+      }
+      if(by === "antiguos"){
+        return copy.sort((a,b)=> (a.inicio || "").localeCompare(b.inicio || ""));
+      }
+      if(by === "titulo"){
+        return copy.sort((a,b)=> a.titulo.localeCompare(b.titulo));
+      }
+      return copy;
+    }
+
+    // Render tarjeta
+    function cardTemplate(p){
+      const tags = (p.tags || []).map(t=>`<span class="chip">${t}</span>`).join(" ");
+      const empresa = p.empresa ? `<span class="chip">🏢 ${p.empresa}</span>` : "";
+      const tiempo = p.tiempo ? `<span class="chip">🗓️ ${p.tiempo}</span>` : "";
+      const enlace = p.enlace ? `<a class="btn btn--primary" href="${p.enlace}" target="_blank" rel="noopener">Ver proyecto</a>` : "";
+      return `
+        <article class="card">
+          <div class="thumb">
+            <img src="${p.imagen}" alt="Vista previa de ${p.titulo}" loading="lazy" />
+            ${p.empresa ? `<span class="badge">${p.empresa}</span>` : ""}
+          </div>
+          <div class="content">
+            <h3>${p.titulo}</h3>
+            <div class="meta">
+              ${empresa} ${tiempo}
+            </div>
+            <p class="desc">${p.descripcion}</p>
+            <div class="meta" aria-label="Tecnologías">${tags}</div>
+            <div class="actions">
+              ${enlace}
+              <button class="btn" data-copy="${p.titulo} — ${p.enlace || ''}">Copiar info</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    // Búsqueda + filtro + orden
+    function filterProjects(){
+      const term = (q.value || "").trim().toLowerCase();
+      const emp = selEmpresa.value;
+      const ord = selOrden.value;
+
+      let result = PROYECTOS.filter(p=>{
+        const text = (p.titulo + " " + p.descripcion + " " + (p.empresa||"")).toLowerCase();
+        const matchQ = term ? text.includes(term) : true;
+        const matchEmp = emp ? p.empresa === emp : true;
+        return matchQ && matchEmp;
+      });
+
+      result = sortProjects(result, ord);
+      renderList(result);
+    }
+
+    function renderList(data){
+      if(!data.length){
+        grid.innerHTML = "";
+        empty.hidden = false;
+        count.textContent = "0";
+        return;
+      }
+      empty.hidden = true;
+      grid.innerHTML = data.map(cardTemplate).join("");
+      count.textContent = data.length.toString();
+
+      // Animación de entrada
+      const io = new IntersectionObserver((entries, obs)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            e.target.classList.add("appear");
+            obs.unobserve(e.target);
+          }
+        });
+      }, {threshold: .2});
+      grid.querySelectorAll(".card").forEach(el=>io.observe(el));
+
+      // Acción copiar
+      grid.querySelectorAll("button[data-copy]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          try{
+            await navigator.clipboard.writeText(btn.dataset.copy || "");
+            btn.textContent = "Copiado ✓";
+            setTimeout(()=>btn.textContent = "Copiar info", 1500);
+          }catch(e){
+            btn.textContent = "No se pudo copiar";
+            setTimeout(()=>btn.textContent = "Copiar info", 1500);
+          }
+        });
+      });
+    }
+
+    // Init
+    function init(){
+      initTheme();
+      fillEmpresaOptions(PROYECTOS);
+      renderList(sortProjects(PROYECTOS, "recientes"));
+      q.addEventListener("input", filterProjects);
+      selEmpresa.addEventListener("change", filterProjects);
+      selOrden.addEventListener("change", filterProjects);
+      document.getElementById("year").textContent = new Date().getFullYear().toString();
+    }
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
