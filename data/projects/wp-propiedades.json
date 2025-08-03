@@ -1,19 +1,35 @@
 {
-  "slug": "wp-propiedades",
-  "titulo": "Template de Propiedades (WordPress)",
-  "empresa": "Freelance",
-  "tiempo": "Jul 2025 — Ago 2025",
-  "periodo": { "inicio": "2025-07-27", "fin": "2025-08-03" },
-  "descripcion": "Template para CPT 'listings' con filtros GET, paginación y AJAX.",
+  "slug": "ibt-us",
+  "titulo": "IBT.us",
+  "empresa": "NERD AGENCIA",
+  "tiempo": "Abr 2024 — May 2025",
+  "periodo": { "inicio": "2024-04-01", "fin": "2025-05-31" },
+  "descripcion": "Tema de WordPress desde cero con 11 vistas, blog con búsqueda AJAX y sitio bilingüe (ES/EN) administrable desde el Personalizador. Plugin de cobertura con Google Maps para validar disponibilidad del servicio según la dirección/posición del usuario.",
   "responsabilidades": [
-    "Estructura del template y taxonomías.",
-    "Paginación y 'Cargar más' via AJAX.",
-    "Optimización de rendimiento y accesibilidad."
+    "Arquitectura y desarrollo de tema WordPress en PHP con 11 vistas/plantillas.",
+    "Implementación de blog con búsqueda AJAX (endpoints JSON, paginación y filtros).",
+    "Plugin de internacionalización: strings y contenido EN administrables desde el Personalizador.",
+    "Integración Google Maps JS API: mapa, marcador draggable, nivel de zoom y bounds.",
+    "Google Places Autocomplete + Geocoding: sincronía input ↔ mapa, normalización de dirección.",
+    "Módulo de cobertura: evaluación point-in-polygon contra JSON interno de sectores.",
+    "Respuesta inmediata de 'hay/no hay cobertura' y actualización del formulario.",
+    "Buenas prácticas de rendimiento (lazy, minificación, rutas relativas) y accesibilidad básica."
   ],
-  "tecnologias": ["WordPress", "ACF", "AJAX"],
+  "tecnologias": [
+    "WordPress",
+    "PHP",
+    "JavaScript (ES6)",
+    "WordPress REST API",
+    "Customizer API",
+    "Google Maps JavaScript API",
+    "Google Places Autocomplete",
+    "Google Geocoding API",
+    "AJAX",
+    "JSON"
+  ],
   "imagenes": [
-    "./images/ibt-inicio.png",
-    "./images/ibt-buscador.png"
+    "./images/ibt-buscador.png",
+    "./images/ibt-inicio.png"
   ],
   "links": {
     "demo": "#",
