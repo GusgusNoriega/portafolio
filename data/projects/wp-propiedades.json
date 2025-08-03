@@ -12,7 +12,7 @@
   ],
   "tecnologias": ["WordPress", "ACF", "AJAX"],
   "imagenes": [
-    "./images/ibt-inicio.jpg",
+    "./images/ibt-inicio.png",
     "./images/wp-propiedades-2.jpg"
   ],
   "links": {
